@@ -1,0 +1,6 @@
+# Ablation "3HG-only": removes the ROI encoder.
+inherits: hilograph.yaml
+model:
+  branches: [3hg]
+train:
+  out_dir: runs/ablation_3hg_only

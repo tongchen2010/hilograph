@@ -1,0 +1,42 @@
+# ---- Never commit data, metadata, or trained artefacts ----
+data/
+datasets/
+runs/
+outputs/
+checkpoints/
+toy_data/
+*.npy
+*.npz
+*.nii
+*.nii.gz
+*.gii
+*.vtk
+*.trk
+*.tck
+*.csv
+*.tsv
+*.xlsx
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.log
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,7 @@
+# Ablation "w/o long": full architecture without L_smooth and L_contrast.
+inherits: hilograph.yaml
+loss:
+  lambda_smooth: 0.0
+  lambda_contrast: 0.0
+train:
+  out_dir: runs/ablation_no_long

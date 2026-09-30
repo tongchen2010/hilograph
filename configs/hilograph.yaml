@@ -1,0 +1,50 @@
+# HiLoGraph (full model). Hyper-parameters follow Sec. 3.1 of the paper.
+
+data:
+  root: /path/to/aabc_graphs          # <root>/<subject_id>/<visit>/{features,networks}/...
+  metadata: /path/to/aabc_scans.csv   # columns: subject_id, visit, age, sex
+  n_roi: 148                          # Destrieux atlas
+  cache: true                         # keep loaded graphs in memory
+  files:
+    x_3hg: features/X_3hg.npy
+    x_roi: features/X_roi_des.npy
+    sc_3hg: networks/SC_3hg_ring5_count_mat_raw.npy
+    sc_roi: networks/SC_roi_des_count_mat_raw.npy
+    roi_id: networks/roi_id_3hg_des.npy
+
+model:
+  in_dim: 5                 # thickness, convexity, curvature, area, volume
+  hidden_dim: 64            # d
+  latent_dim: 64            # dim(z)
+  n_layers_3hg: 3           # 3HG encoder GCN layers
+  n_layers_roi: 2           # ROI encoder GCN layers
+  decoder_layers: 3         # GCN-FiLM layers per decoder
+  node_embed_dim: 32        # node-identity embeddings
+  max_3hg_nodes: 512        # size of the 3HG node-identity table
+  age_hidden_dim: 32        # f_age: 64 -> 32 -> 1
+  dropout: 0.1
+  branches: [3hg, roi]
+
+loss:
+  lambda_roi: 1.0           # lambda_r
+  lambda_3hg: 0.1           # lambda_f
+  lambda_kl: 0.01           # lambda_KL
+  lambda_smooth: 0.5        # lambda_s
+  lambda_contrast: 0.1      # lambda_t
+  lambda_age: 0.1           # lambda_a
+  temperature: 0.07         # tau
+  min_age_gap: 0.5          # years; floor for (a_2 - a_1) in Eq. (3)
+
+train:
+  n_folds: 5                # subject-level cross-validation
+  val_fraction: 0.2         # of each fold's training subjects, for early stopping
+  batch_size: 32
+  epochs: 100
+  patience: 20
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  grad_clip: 1.0
+  seed: 42
+  num_workers: 0
+  device: cuda
+  out_dir: runs/hilograph

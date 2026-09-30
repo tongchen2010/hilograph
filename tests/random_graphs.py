@@ -1,8 +1,4 @@
-"""Synthetic cohorts in the expected on-disk format, for tests and smoke runs.
-
-The numbers are random (with a weak age / diagnosis effect on thickness); they
-only exercise the code path and carry no scientific meaning.
-"""
+"""Random graphs in the expected on-disk format, used only as unit-test fixtures."""
 
 from __future__ import annotations
 
@@ -11,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .data import DEFAULT_FILES
+from hilograph.data import DEFAULT_FILES
 
 
 def _sparse_counts(n: int, density: float, rng) -> np.ndarray:
@@ -52,7 +48,7 @@ def write_scan(scan_dir: Path, age: float, rng, n_roi: int = 148,
         np.save(path, arrays[key])
 
 
-def make_toy_cohorts(out_dir: str | Path, n_healthy: int = 40, n_clinical: int = 45,
+def make_random_cohorts(out_dir: str | Path, n_healthy: int = 40, n_clinical: int = 45,
                      seed: int = 0):
     """Writes ``healthy/`` (longitudinal, 1-3 visits) and ``clinical/``
     (single visit, CN/AD/LBD labels) plus their metadata CSVs."""

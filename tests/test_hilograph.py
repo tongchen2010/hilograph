@@ -12,7 +12,7 @@ from hilograph.encoder import pool_to_roi
 from hilograph.losses import contrastive_loss, hilograph_loss, kl_loss, smoothness_loss
 from hilograph.model import HiLoGraph
 from hilograph.normative import NormativeModel
-from hilograph.toy import make_toy_cohorts
+from random_graphs import make_random_cohorts
 
 REPO = Path(__file__).resolve().parents[1]
 LOSS_CFG = {"lambda_roi": 1.0, "lambda_3hg": 0.1, "lambda_kl": 0.01, "lambda_smooth": 0.5,
@@ -20,15 +20,15 @@ LOSS_CFG = {"lambda_roi": 1.0, "lambda_3hg": 0.1, "lambda_kl": 0.01, "lambda_smo
 
 
 @pytest.fixture(scope="module")
-def toy(tmp_path_factory):
-    root = tmp_path_factory.mktemp("toy")
-    healthy_csv, clinical_csv = make_toy_cohorts(root, n_healthy=16, n_clinical=36)
+def cohorts(tmp_path_factory):
+    root = tmp_path_factory.mktemp("graphs")
+    healthy_csv, clinical_csv = make_random_cohorts(root, n_healthy=16, n_clinical=36)
     return root, healthy_csv, clinical_csv
 
 
 @pytest.fixture(scope="module")
-def healthy_dataset(toy):
-    root, healthy_csv, _ = toy
+def healthy_dataset(cohorts):
+    root, healthy_csv, _ = cohorts
     ds = ScanDataset(read_metadata(healthy_csv, root / "healthy"))
     ds.set_feature_stats(compute_feature_stats(ds, range(len(ds))))
     return ds
@@ -119,8 +119,8 @@ def test_normative_model_recovers_scale():
     assert abs(d.mean()) < 0.05 and abs(d.std() - 1) < 0.1
 
 
-def test_end_to_end_cli(toy, tmp_path):
-    root, healthy_csv, clinical_csv = toy
+def test_end_to_end_cli(cohorts, tmp_path):
+    root, healthy_csv, clinical_csv = cohorts
     run = tmp_path / "run"
     py = sys.executable
     subprocess.run([py, "train.py", "--config", "configs/hilograph.yaml", "--folds", "0", "1", "--set",
